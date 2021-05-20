@@ -23,7 +23,7 @@ dropAll(E,[H|T], [H|L]):- dropAll(E, T, L).
 dropAll(E, [E|T], T).
 
 %2.1 fromList(+List,-Graph)
-%test: fromList([10, 20, 30], e [e(10, 20), e(20, 30)]).
+%test: fromList([10, 20, 30], [e(10, 20), e(20, 30)]).
 
 fromList([_],[]).
 fromList([H1,H2|T],[e(H1,H2)|L]):- fromList([H2|T],L).

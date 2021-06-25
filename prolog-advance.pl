@@ -31,6 +31,7 @@ fromList([H1,H2|T],[e(H1,H2)|L]):- fromList([H2|T],L).
 %2.2 fromCircList						TO-DO
 % fromCircList(+List,-Graph)
 %fromCircList([10,20,30],[e(10,20),e(20,30),e(30,10)]).
+fromCircList([H1|T],L):- append([H1|T],[H1],L2),fromList(L2,L).
 
 %2.3 dropNode
 % dropNode(+Graph, +Node, -OutGraph)

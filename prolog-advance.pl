@@ -27,23 +27,19 @@ dropAll(E, [E|T], T).
 fromList([_],[]).
 fromList([H1,H2|T],[e(H1,H2)|L]):- fromList([H2|T],L).
 
-%2.2 fromCircList						
-% fromCircList(+List,-Graph)
-%fromCircList([10,20,30],[e(10,20),e(20,30),e(30,10)]).
+%2.2 fromCircList(+List,-Graph)
+%test: fromCircList([10,20,30],[e(10,20),e(20,30),e(30,10)]).
 fromCircList([H1|T],L):- append([H1|T],[H1],L2),fromList(L2,L).
 
-%2.3 dropNode                       TO-DO
-% dropNode(+Graph, +Node, -OutGraph)
-% drop all edges starting and leaving from a Node
-% use dropAll defined in 1.1
+%2.3 dropNode(+Graph, +Node, -OutGraph)
+% drop all edges starting and leaving from a Node use dropAll defined in 1.1
 %test: dropNode([e(1,2),e(1,3),e(2,3)],1,[e(2,3)]).
 dropNode(G,N,O):- dropAll(G,e(N,_),G2), dropAll(G2,e(_,N),O).
 
-%2.4 reaching
+%2.4 reaching    TO-DO
 % reaching(+Graph, +Node, -List)
 % all the nodes that can be reached in 1 step from Node
-% possibly use findall, looking for e(Node,_) combined
-% with member(?Elem,?List)
+% possibly use findall, looking for e(Node,_) combined with member(?Elem,?List)
 %test:reaching([e(1,2),e(1,3),e(2,3)],1,L). -> L/[2,3]
 %test: reaching([e(1,2),e(1,2),e(2,3)],1,L). -> L/[2,2]).
 

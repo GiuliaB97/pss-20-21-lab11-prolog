@@ -36,12 +36,19 @@ fromCircList([H1|T],L):- append([H1|T],[H1],L2),fromList(L2,L).
 %test: dropNode([e(1,2),e(1,3),e(2,3)],1,[e(2,3)]).
 dropNode(G,N,O):- dropAll(G,e(N,_),G2), dropAll(G2,e(_,N),O).
 
-%2.4 reaching    TO-DO
-% reaching(+Graph, +Node, -List)
-% all the nodes that can be reached in 1 step from Node
-% possibly use findall, looking for e(Node,_) combined with member(?Elem,?List)
+%2.4 reaching(+Graph, +Node, -List)
+% all the nodes that can be reached in 1 step from Node possibly use findall, looking for e(Node,_) combined with member(?Elem,?List)
 %test:reaching([e(1,2),e(1,3),e(2,3)],1,L). -> L/[2,3]
 %test: reaching([e(1,2),e(1,2),e(2,3)],1,L). -> L/[2,2]).
+        %N: nodo di cui devo trovare i successori
+        %G: grafo 
+        %O: lista dei successori
+        %S: nodo successivo che vado a considerare
+        %member(e(N,S), G): restituisce true se e solo se e(N,S) è una tupla del grafo
+        %findall(S,member(e(N,S),G),O): se il goal passato come secondo argomento ha un risultato 
+        %allora unifica il terzo argomento con il primo
+        %-> se la tupla passata alla member è presente nel grafo allora S è figlio di N e quindi va aggiunto alla lista dei suoi succcessori
+reaching(G,N,O):- findall(S,member(e(N,S),G),O).
 
 %Advanced exerices
 %2.5 anypath

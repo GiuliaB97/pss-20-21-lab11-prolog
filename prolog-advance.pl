@@ -51,7 +51,7 @@ dropNode(G,N,O):- dropAll(G,e(N,_),G2), dropAll(G2,e(_,N),O).
 reaching(G,N,O):- findall(S,member(e(N,S),G),O).
 
 %Advanced exerices
-%2.5 anypath
+%2.5 anypath                                    TO-DO
 % anypath(+Graph, +Node1, +Node2, -ListPath)
 % a path from Node1 to Node2 if there are many path, they are showed 1-by-1
 %test: anypath([e(1,2),e(1,3),e(2,3)],1,3,L).

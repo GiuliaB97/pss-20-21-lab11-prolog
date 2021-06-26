@@ -38,7 +38,7 @@ dropNode(G,N,O):- dropAll(G,e(N,_),G2), dropAll(G2,e(_,N),O).
 
 %2.4 reaching(+Graph, +Node, -List)
 % all the nodes that can be reached in 1 step from Node possibly use findall, looking for e(Node,_) combined with member(?Elem,?List)
-%test:reaching([e(1,2),e(1,3),e(2,3)],1,L). -> L/[2,3]
+%test:reaching([e(1,2),e(1,3),e(2,3)],1,L). -> L/[2,3].
 %test: reaching([e(1,2),e(1,2),e(2,3)],1,L). -> L/[2,2]).
         %N: nodo di cui devo trovare i successori
         %G: grafo 
@@ -51,22 +51,20 @@ dropNode(G,N,O):- dropAll(G,e(N,_),G2), dropAll(G2,e(_,N),O).
 reaching(G,N,O):- findall(S,member(e(N,S),G),O).
 
 %Advanced exerices
-%2.5 anypath                                    TO-DO
-% anypath(+Graph, +Node1, +Node2, -ListPath)
+%2.5 anypath(+Graph, +Node1, +Node2, -ListPath)
 % a path from Node1 to Node2 if there are many path, they are showed 1-by-1
 %test: anypath([e(1,2),e(1,3),e(2,3)],1,3,L).
 %output: – L/[e(1,2),e(2,3)] e L/[e(1,3)]
 
-%Implement it; suggestion:
-%– a path from N1 to N2 exists if there is a e(N1,N2)
-%– a path from N1 to N2 is OK if N3 can be reached from N1, and then there is a path from N2 to N3, recursively
+anypath(G,N1,N2,[e(N1,N2)]):- member(e(N1,N2),G),!.                           %– a path from N1 to N2 exists if there is a e(N1,N2)
+anypath(G,N1,N2,[e(N1,N3)|LP]):- member(e(N1,N3),G),                     %– a path from N1 to N2 is OK if N3 can be reached from N1, 
+                                anypath(G,N3,N2,LP).                     %       and then there is a path from N2 to N3, recursively
 
-%2.6 allreaching
-%% allreaching(+Graph, +Node, -List)
-% all the nodes that can be reached from Node
-% Suppose the graph is NOT circular!
-% Use findall and anyPath!
+%2.6 allreaching(+Graph, +Node, -List)
+% all the nodes that can be reached from Node. Suppose the graph is NOT circular!. Use findall and anyPath!
 %test: allreaching([e(1,2),e(2,3),e(3,5)],1,[2,3,5]).
+        %se esiste un percorso tra N e un nodo successivo allora tale nodo viene aggiunto alla lista finale
+allreaching(G,N,L):- findall(S,anypath(G,N,S,_),L).
 
 %2.7 grid-like nets
 %During last lesson we see how to generate a gridlike network. Adapt that code to create a graph for the predicates implemented so far.

@@ -1,5 +1,5 @@
 % ex 1.1 dropAny(Elem,List,OutList)
-%test: Yes: dropAny(3,[0,1,2,3,7], [0,1,2,7]).		No: dropAny( 3,[0,1,2,3,7], [0,1,2,3,7]).
+%test: Yes: dropAny(3,[0,1,2,3,7], [0,1,2,7]).			No: dropAny( 3,[0,1,2,3,7], [0,1,2,3,7]).
 dropAny(E, [H|T1], [H|T2]):-dropAny(E, T1, T2).
 dropAny(E, [E|T], T).
 
@@ -19,14 +19,16 @@ dropAll(E, [H|T1], [H|T2]):-dropAll(E, T1, T2),!.
 dropAll(E, [E|T], L):-dropAll(E, T, L),!.
 dropAll(E, [E|T], T).
 
-%2.1 fromList(+List,-Graph)
-%test: fromList([10, 20, 30], [e(10, 20), e(20, 30)]).
+%2.1 fromList(List, Graph)
+%test Yes: fromList([10,20,30],[e(10,20),e(20,30)]).
 fromList([_],[]).
-fromList([H1,H2|T],[e(H1,H2)|L]):- fromList([H2|T],L).
+fromList([H1, H2|T1], [e(H1, H2)|T2]):-fromList([H2|T1],T2).
 
-%2.2 fromCircList(+List,-Graph)
-%test: fromCircList([10,20,30],[e(10,20),e(20,30),e(30,10)]).
-fromCircList([H1|T],L):- append([H1|T],[H1],L2),fromList(L2,L).
+%2.2 fromCircList(List, Graph)
+%test: Yes: fromCircList([10,20,30],[e(10,20),e(20,30),e(30,10)]).
+fromCircList([H|T], G):-
+	append([H|T], [H], L),
+	fromList(L, G).
 
 %2.3 % dropNode(+Graph, +Node, -OutGraph); drop all edges starting and leaving from a Node
 %test dropNode([e(1,2),e(1,3),e(2,3)],1,[e(2,3)]).

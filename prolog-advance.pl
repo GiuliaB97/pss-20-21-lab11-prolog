@@ -1,25 +1,22 @@
-% ex 1.1 drop*(Elem , List, OutList)
-
-%DropAny
-%test: dropAny(10, [10,20,30,10], L).
+% ex 1.1 dropAny(Elem,List,OutList)
+%test: Yes: dropAny(3,[0,1,2,3,7], [0,1,2,7]).		No: dropAny( 3,[0,1,2,3,7], [0,1,2,3,7]).
+dropAny(E, [H|T1], [H|T2]):-dropAny(E, T1, T2).
 dropAny(E, [E|T], T).
-dropAny(E,[H|T], [H|L]):-dropAny(E, T, L).
 
-%dropFirst
-%test: dropFirst(10, [10,20,30,10], L).
+% dropFirst(Elem,List,OutList)
+%test: Yes: dropFirst( 3,[0,1,2,3,7,3], [0,1,2,7,3]).		No: dropFirst( 3,[0,1,2,3,7,3], [0,1,2,3,7,3]).
 dropFirst(E, [E|T], T):-!.
-dropFirst(E,[H|T], [H|L]):- dropFirst(E, T, L).
+dropFirst(E, [H|T1], [H|T2]):-dropFirst(E, T1, T2).
 
-%dropLast
-%test: dropLast(10, [10,20,30,10], L).
-dropLast(E,[H|T], [H|L]):- dropLast(E, T, L),!.
-dropLast(E,[E|T], L):- dropLast(E, T, L).
+% dropLast(Elem,List,OutList)
+%test: Yes: dropLast( 3,[0,1,2,3,7,3], [0,1,2,3,7]).		No: dropLast( 3,[0,1,2,3,7,3], [0,1,2,3,7,3]).
+dropLast(E, [H|T1], [H|T2]):-dropLast(E, T1, T2),!.
 dropLast(E, [E|T], T).
 
-%dropAll
-%test: dropAll(10, [10,20,30,10], L).
-dropAll(E,[E|T], L):- dropAll(E, T, L), !.
-dropAll(E,[H|T], [H|L]):- dropAll(E, T, L).
+% dropAll(Elem,List,OutList)
+%test: Yes: dropAll( 3,[0,1,2,3,7,3], [0,1,2,7]).		No: dropLast( 3,[0,1,2,3,7,3], [0,1,2,3,7,3]).
+dropAll(E, [H|T1], [H|T2]):-dropAll(E, T1, T2),!.
+dropAll(E, [E|T], L):-dropAll(E, T, L),!.
 dropAll(E, [E|T], T).
 
 %2.1 fromList(+List,-Graph)
@@ -31,43 +28,13 @@ fromList([H1,H2|T],[e(H1,H2)|L]):- fromList([H2|T],L).
 %test: fromCircList([10,20,30],[e(10,20),e(20,30),e(30,10)]).
 fromCircList([H1|T],L):- append([H1|T],[H1],L2),fromList(L2,L).
 
-%2.3 dropNode(+Graph, +Node, -OutGraph)
-% drop all edges starting and leaving from a Node use dropAll defined in 1.1
-%test: dropNode([e(1,2),e(1,3),e(2,3)],1,[e(2,3)]).
-dropNode(G,N,O):- dropAll(G,e(N,_),G2), dropAll(G2,e(_,N),O).
+%2.3 % dropNode(+Graph, +Node, -OutGraph); drop all edges starting and leaving from a Node
+%test dropNode([e(1,2),e(1,3),e(2,3)],1,[e(2,3)]).
+dropNode(Graph, Node, OutGraph):-
+	dropAll(Graph, e(N, _), TmpOutGraph),
+	dropAll(TmpOutGraph, e(_, Node),OutGraph).
 
-%2.4 reaching(+Graph, +Node, -List)
-% all the nodes that can be reached in 1 step from Node possibly use findall, looking for e(Node,_) combined with member(?Elem,?List)
-%test:reaching([e(1,2),e(1,3),e(2,3)],1,L). -> L/[2,3].
-%test: reaching([e(1,2),e(1,2),e(2,3)],1,L). -> L/[2,2]).
-        %N: nodo di cui devo trovare i successori
-        %G: grafo 
-        %O: lista dei successori
-        %S: nodo successivo che vado a considerare
-        %member(e(N,S), G): restituisce true se e solo se e(N,S) è una tupla del grafo
-        %findall(S,member(e(N,S),G),O): se il goal passato come secondo argomento ha un risultato 
-        %allora unifica il terzo argomento con il primo
-        %-> se la tupla passata alla member è presente nel grafo allora S è figlio di N e quindi va aggiunto alla lista dei suoi succcessori
-reaching(G,N,O):- findall(S,member(e(N,S),G),O).
-
-%Advanced exerices
-%2.5 anypath(+Graph, +Node1, +Node2, -ListPath)
-% a path from Node1 to Node2 if there are many path, they are showed 1-by-1
-%test: anypath([e(1,2),e(1,3),e(2,3)],1,3,L).
-%output: – L/[e(1,2),e(2,3)] e L/[e(1,3)]
-
-anypath(G,N1,N2,[e(N1,N2)]):- member(e(N1,N2),G),!.                           %– a path from N1 to N2 exists if there is a e(N1,N2)
-anypath(G,N1,N2,[e(N1,N3)|LP]):- member(e(N1,N3),G),                     %– a path from N1 to N2 is OK if N3 can be reached from N1, 
-                                anypath(G,N3,N2,LP).                     %       and then there is a path from N2 to N3, recursively
-
-%2.6 allreaching(+Graph, +Node, -List)
-% all the nodes that can be reached from Node. Suppose the graph is NOT circular!. Use findall and anyPath!
-%test: allreaching([e(1,2),e(2,3),e(3,5)],1,[2,3,5]).
-        %se esiste un percorso tra N e un nodo successivo allora tale nodo viene aggiunto alla lista finale
-allreaching(G,N,L):- findall(S,anypath(G,N,S,_),L).
-
-%2.7 grid-like nets
-%During last lesson we see how to generate a gridlike network. Adapt that code to create a graph for the predicates implemented so far.
-% Try to generate all paths from a node to another,limiting the maximum number of hops
-
-%3 TicTacToes
+%2.4 % reaching(+Graph, +Node, -SuccessorList); all the nodes that can be reached in 1 step
+%test: reaching([e(1,2),e(1,2),e(2,3)],1,[2,2]).
+reaching(Graph,Node,SuccessorList):-
+	findall(Successor, search(e(Node,Successor),Graph), SuccessorList).
